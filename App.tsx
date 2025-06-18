@@ -1,131 +1,76 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { hideSplash } from 'react-native-splash-view';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import store, { persistor } from './src/Redux/store';  
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Welcome from './src/screens/Welcome';
+import Singin from './src/screens/Singin';
+import Number from './src/screens/Number';
+import Verification from './src/screens/Verification';
+import SelectLocation from './src/screens/SelectLocation';
+import Login from './src/screens/login';
+import SignUp from './src/screens/SignUp';
+import BottomTabs from './src/constants/BottomTabs';
+import HomeScreen from './src/screens/HomeScreen';
+import CartScreen from './src/screens/CartScreen';
+import ProductDetailsScreen from './src/screens/ProductDetailsScreen';
+import BeveragesScreen from './src/screens/Beverages';
+import orderaccepted from './src/screens/orderaccepted';
+import Orders from './src/screens/Orders';
+import OrderDetails from './src/screens/OrderDetails';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import useUserStore from './src/store/storageZustand';
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const Stack = createNativeStackNavigator();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+const App = () => {
+  const { isLogin } = useUserStore();
 
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
+  useEffect(() => {
+    setTimeout(() => {
+      hideSplash();
+    }, 5000);
+  }, []);
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
-  );
-}
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {!isLogin ? (
+              <>
+                <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Singin" component={Singin} />
+                <Stack.Screen name="Number" component={Number} />
+                <Stack.Screen name="Verification" component={Verification} />
+                <Stack.Screen name="SelectLocation" component={SelectLocation} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="SignUp" component={SignUp} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Cart" component={CartScreen} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="Main" component={BottomTabs} />
+                <Stack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
+                <Stack.Screen name="BeveragesScreen" component={BeveragesScreen} />
+                <Stack.Screen name='Orderaccepted' component={orderaccepted} />
+                <Stack.Screen name='Orders' component={Orders}  />
+                <Stack.Screen name="OrderDetails" component={OrderDetails} />
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+              </>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
+  );
+};
 
 export default App;

@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Nectar</string>
+
+
+<!-- new code -->
+<string name="facebook_app_id">3872342923020095</string>
+ 
+<string name="facebook_client_token">7022e48eb2457957dca2c73159a453ba</string>
+<string name="fb_login_protocol_scheme">fb3872342923020095</string>
+<!-- new code -->
+
+ 
+
 </resources>
